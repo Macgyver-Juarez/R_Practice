@@ -1,0 +1,23 @@
+---
+title: "R Notebook - Introduction"
+output: html_notebook
+---
+
+## Gareth James - Daniela Witten - Trevor Hastie - Robert Tibshirani
+
+# -An Introduction to Statistical Learning with Applications in R-
+
+# I. Introduction
+
+### **Supervised learning**: involves building a statistical model for predicting, or estimating, an output based on one or more *inputs*.
+### **Unsupervised learning**: Inputs, but no outputs. We are still able to learn relationships and structure from such data.
+
+#### Predicting a __*continuous*__ or __*quantitative*__ output value is often referred to as a __*regression*__ problem.
+#### Predicting a non-numerical value--a __*categorical*__ or __*qualitative*__ output, is referred to as a __*classification*__ problem.
+#### Situations involving only input variables, with no corresponding output, where we are trying to group observations by their observed characterstics is a __*clustering*__ problem.
+
+## __A note on notation throughout this book and these exercises__
+
+__*n*__ denotes the number of observations and __*p*__ denotes the number of variables.
+
+__x~ij~__ represents the value of the *j*th varaiable for *i*th observation.
