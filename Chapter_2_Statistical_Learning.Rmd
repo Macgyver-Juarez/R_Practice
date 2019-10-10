@@ -1,0 +1,656 @@
+---
+title: "R Notebook - Chapter 2: Statistical Learning"
+output: html_notebook
+---
+
+# __II. Statistical Learning__
+
+## __2.1 What is Statistical Learning?__
+
+__Input variables__ also referred to as: *predictors, independent variables, features*. Typically denoted __X__
+
+__Output variable__ often called the: *response* or *dependent variable*. Typically denoted __Y__
+
+Assuming there is some relationship between our predictors and response
+__Y = *f*(X) + *E*__
+
+Where *f* is some fixed but unknown function of X~1~, ... , X~p~
+
+And *E* is a random *error term* which is independent of X and has mean zero.
+
+In this formula, *f* represents the *systematic* information that X provides about Y.
+
+"In essence, statistical learning refers to a set of approaches for estimating *f*. In this chapter we outline some of the key theoretical concepts that arise in estimating *f*, as well as tools for evaluating the estimates obtained.
+
+### __*2.1.1 Why Estimate f?*__
+
+2 main reasons: __*prediction*__ and __*inference*__
+
+__Prediction__
+
+We are not typically concerned with the exact form of the predicted funtion of x, rather more that it yields accurate predictions of Y.
+
+The accuracy of the predicted value of Y depends on two quantities: the __*reducible error*__ and the __*irreducible error*__.
+
+The __*reducible error*__ can potentially be reduced by improving the accuracy of the predicted-*f*by using the most appropriate statistical learning technique to estimate *f*.
+
+However, there is always some __*irreducible error*__ because Y is also a function of *E*, which, by definition, cannot be predicted using X. Thus, no matter how well we estimate *f*, we cannot reduce the error introduced by *E*.
+
+The quantity *E* may contain unmeasured variables that are useful in predicting Y: since we don't measure them, *f* cannot use them for its prediction.
+
+The quantity *E* may also contain unmeasurable variation.
+
+The focus of this book is on techniques for estimating *f* with the aim of minimizing the reducible error.
+
+__Inference__
+
+The goal is to understand the relationship between X and Y via our approximations for *f*. More specifically, to understand how Y changes as a function of X~1~, ... , X~p~.
+
+Now we are interested in the form of the predicted function of *f*.
+
+We would thus be curious about:
+
+1. *Which predictors are associated with the response?*
+2. *What is the relationship between the response and each predictor?*
+3. *Can the relationship between Y and each predictor be adequately summarized using a linear equation, or is the relationship more complicated?*
+
+__Depending on whether our ultimate goal is prediction, inference, or a combination of the two, different methods for estimating *f* may be appropriate.__
+
+## __2.1.2 How Do We Estimate f?__
+
+__*Training data*__ is our observed set of *n* different data points we use to train, or teach, our method how to estimate *f*.
+
+#### __Parametric Methods__
+
+Parametric methods involve a two-step model-based approach.
+
+1.) First, we make an assumption about the functional form, or shape, of *f*. __Assuming *f*(X) is linear:__
+
++ *f*(X) = *B*~0~ + *B*~1~X~1~ + *B*~2~X~2~ + ... + *B*~p~X~p~.
+
+2.) After a model has been selected, we need a procedure that uses the training data to *fit* or *train* the model. In the case of the linear model, we need to estimate the paramaters *B*~0~, *B*~1~, ... , *B*~p~.
+That is, we want to find values of these paramaters such that
+
++ Y = *B*~0~ + *B*~1~X~1~ + *B*~2~X~2~ + ... + *B*~p~X~p~.
+
+__*Parametric modeling*__ thus reduces the problem of estimating *f* down to one of estimating a set of parameters.
+
+> "Assuming a parametric form for *f* simplifies the problem of estimating *f* because it is generally much easier to estimate a set of paramaters, such as *B*~0~, *B*~1~, ... , *B*~p~ in the linear model, than it is to fit an entirely arbitrary function *f*. __The potential disadvantage of a parametric approach is that the model we choose will usually not match the true unknown form of *f*.__ If the chosen model is too far from the true *f*, then our estimate will be poor. We can try to address this problem by choosing *flexible* models that can fit many different possible functional forms for *f*. But in general, fitting a more flexible model requires estimating a greater number of parameters. These more complex models can lead to a phenomenon known as *overfitting* the data, which essentially means they follow the errors, or *noise*, too closely.
+
+#### __Non-Parametric Methods__
+
+> "Non-parametric methods do not make explicit assumptions about the functional form of *f*. Insteady they seek an estimate of *f* that gets as close to the data points as possible without being too rough or wiggly. Such approaches can have a major advantage over parametric approaches: by avoiding the assumption of a particular functional form for *f*, they have the potential to accurately fit a wider range of possible shapes for *f*. Any parametric approach brings with it the possibility that the functional form used to estimate *f* is very different from the true *f*, in which case the resulting model will not fit the data well. In costrast, non-parametric approaches completely avoid this danger, since essentially no assumption about the form of *f* is made. __But non-parametric approaches do suffer from a major disadvantage: since they do not reduce the problem of estimating *f* to a small number of parameters, a very large number of observations (far more than is typically needed for a parametric approach) is required in order to obtain an accurate estimate for *f*.__"
+
+*Overfitting* the data is undesirable because the fit obtained will not yield accurate estimates of the response on new observations that were not part of the original training data set.
+
+## __2.1.3 The Trade-Off Between Prediction Accuracy and Model Interpretability?__
+
+__*Why would we ever choose to use a more restrictive method instead of a very flexible approach?*__
+
+-More restrictive models are more interpretable and are thus better for inference problems.
+
+-In settings where the interpretability of the predictive model is not of interest, as in the case of prediction problems, relatively more flexible techniques are more advantageous. However, more flexible methods often run the risk of *overfitting* 
+
+## __2.1.4 Supervised Versus Unsupervised Learning?__
+
+The methods we have already discussed are all examples of __*Supervised Learning*__. Essentially, we have inputs and are trying to either predict response value based on our inputs or make some inference as to the likelihood of our output given our inputs.
+
+__*Unsupervised learning*__ is not concerned with the response *y*~i~. "We lack a response variable that can supervise our analysis." One such example is *cluster analysis* which seeks to ascentain, on the basis of *x*~1~, ... , *x*~n~, whether the observations fall into relatively distinct groups.
+
+## __2.1.5 Regression Versus Classification Problems__
+
+*Quantitative* variables take on numerical values.
+
+*Qualitative* variables take on values in one of K different *classes*.
+
+Problems with a __quantitative__ response are typically referred to as *regression* problems.
+
+Problems with a __qualitative__ response are typically referred to as *classification* problems.
+
+## __2.2 Assessing Model Accuracy?__
+
+Before undertaking any kind of statistical analysis, ask the question, "*Which specific method works best for the particular data set*".
+
+## __2.2.1 Measuring the Quality of Fit__
+
+The *mean squared error* (__MSE__) quantifies the extent to which the predicted response value for a given observation is close to the true response value for that observation.
+
+> "The __MSE__ will be small if the predicted responses are very close to the true responses, and will be large if for some of the observations, the predicted and true responses differ substantially."
+
+Remember: we are not really interested in how our predicted functional form *f*(x) fits our response value in the training data. Rather, we are more interested in how our functional form *f*(x) fits a *previously unseen test observation not used to train the statistical learning method*.
+
+Thus, we want to select the method with the lowest *test MSE*.
+
+__*Degrees of freedom*__ is a quantity that summarizes the flexibility of a curve.
+
+*As model flexibility increases, training MSE will decrease, but the test MSE may not.*
+
+*When a given method yields a small training MSE but a large test MSE, we are said to be __overfitting__ the data. Overfitting refers specifically to the case in which a less flexible model would have yielded a smaller test MSE.*
+
+*Cross-validation*: a method for estimating test MSE using the training data.
+
+## __2.2.2 The Bias-Variance Trade-Off__
+
+The expected test MSE, for a given value of *x*~0~ can be decomposed into three fundamental quantities:
+
+* __The variance of the predicted functional form of f(*x*~0~)__
+* __The squared *bias* of the predicted functional form of f(*x*~0~)__
+* __The variance of the error terms *E*__
+
+##### *Thus, in order to minimize the expected test error, we need to select a statistical learning method that simultaneously achies *low variance* and *low bias*.*
+
+__*Variance*__ refers to the amount by which the predicted funtional form of *f* would change if we estimated it using a different training data set.
+
+In general, more flexible statistical methods have higher variance.
+
+__*Bias*__ refers to the error that is introduced by approximating a real-life problem, which may be extrememly complicated, by a much simpler model.
+
+Generally, more flexible methods result in less bias.
+
+As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease.
+
+##### __The relative rate of change of these two quantities determines whether the test MSE increases or decreases.__
+
+> As we increase the flexibility of a class of methods, the bias tends to initially decrease faster than the variance increases. Consequently, the expected test MSE declines. However, at some point increasing flexibility has little impact on the bias but starts to significantly increase the variance. When this happens the test MSE increases. 
+
+__The relationship between bias, variance, and test set MSE outlined above is referred to as the *bias-variance trade-off*. __The challenge lies in finding a method for which both the variance and the squared bias are low.__
+
+## __2.2.3 The Classification Setting__
+
+"The most common approach for quantifying the accuracy of our estimate of the functional form of *f* is the training __error rate__, *the proportion of mistakes that are made if we apply our estimate of the functional form *f* to the training observations.
+
+Essentially, the rate of incorrect classifications.
+
+__*The Bayes Classifier*__
+
+The test error rate given is minimized, on average, by a very simple classifier that *assigns each observation to the most likely class, given its predictor values*.
+
+The __*Bayes Classifier*__ uses a conditional probability for a 2 class predictor function assigning each observation to class x if its probability of belonging to that class is > .5.
+
+__*Bayes decision boundary*__ the line representing the points where the boundary is exactly 50%.
+
+__K-Nearest Neighbors__
+
+Many approaches attempt to estimate the conditional distribution of Y given X, and then classify a given observation to the class with highest *estimated* probability. 
+
+__*K-nearest neighbors* (KNN)__ is one such method.
+
+Thus, you specify how many "__K's__". With too many, the model is too rigid, with too few it is too flexible.
+
+## __2.3 Lab: Introduction to R__
+
+## __*2.3.1 Basic Commands*__ 
+
+__1.) Defines a vector 2.) Views it__
+```{r}
+x = c(1,3,2,5)
+x
+```
+__Defines, lists, shows the lengths and sums the vectors.__
+```{r}
+x = c(1,6,2)
+x
+y=c(1,4,3)
+y
+```
+```{r}
+length(x)
+length(y)
+x+y
+```
+__Lists the vectors__
+```{r}
+ls()
+```
+__Removes the specified vector__
+```{r}
+rm(x,y)
+ls()
+```
+__Removes all vectors in the list at once.__
+```{r}
+rm(list=ls())
+```
+__Creates a matrix w/ 3 dimensions: the data, # of rows, and # of columns.*Note* it fills in the columns first.__
+```{r}
+x=matrix(data=c(1,2,3,4), nrow=2, ncol=2)
+x
+```
+__Again, creates a matrix, but fills in the rows first.__
+```{r}
+x=matrix(data=c(1,2,3,4), nrow=2, ncol=2,byrow=T)
+x
+```
+__Returns the square root of each element of a vector or matrix__
+```{r}
+sqrt(x)
+x
+x^2
+```
+__Generates a vector of random normal variables. First argument is *n* sample size. Then, derives the correlation between the two vectors.__
+```{r}
+x=rnorm(50)
+y=x+rnorm(50,mean=50,sd=.1)
+cor(x,y)
+```
+__Sets a random vector for use later by defining the previously generated random variables.__
+```{r}
+set.seed(1303)
+rnorm(50)
+```
+__Sets the random variables for replicability by defining a vector of 100 random observations (the same as in the book) and then calculating the mean.__
+```{r}
+set.seed(3)
+y=rnorm(100)
+mean(y)
+```
+__Calculates the variance of y.__
+```{r}
+var(y)
+```
+__Calculates the square root of the variance of y (the standard deviation).__
+```{r}
+sqrt(var(y))
+```
+__A simpler method of calculating the standard deviation of y.__
+```{r}
+sd(y)
+```
+
+## __*2.3.2 Graphics*__ 
+
+__Defines vectors *x* and *y* by a series of 100 random normal observations then plots them. Finally, plots them with specific labels on the corresponding axis and a Header.__
+```{r}
+x=rnorm(100)
+y=rnorm(100)
+plot(x,y)
+plot(x,y,xlab="This is the X axis",ylab="This is the Y axis",main="Plot of X and Y")
+```
+__Creates a pdf of the graphic we create. First we specify the type of file we wish to create and name it. Then we create it. Finally we specify that we are done creating it. Saves it in the location of the current working directory.
+```{r}
+pdf("Figure.pdf")
+plot(x,y,col="green")
+dev.off()
+```
+__Creates a sequence of numbers. If you specify two points it creates a vector of numbers between those two points. You can also specify length to give a sequence of equally spaced numbers between the two points by that length.__
+```{r}
+x=seq(1,10)
+x
+```
+__More sophisticated form__
+```{r}
+x=seq(-pi,pi,length=50)
+x
+```
+
+## __*2.3.3 Indexing Data*__
+
+__Creates a matrix of values between 1 and 16 with 4 rows and 4 columns.__
+```{r}
+A=matrix(1:16,4,4)
+A
+```
+Returns the value corresponding to __row 2 column 3__.
+```{r}
+A[2,3]
+```
+__Selects multiple rows and columns at a time, by providing vectors as the indices.__
+
+Returns the values at the intersection of *rows* __1__ and __3__ and *columns* __2__ and __4__.
+```{r}
+A[c(1,3),c(2,4)]
+```
+Returns all the values that correspond to the intersection of *rows* __1__ though __3__ and *columns* __2__ through __4__. 
+```{r}
+A[1:3,2:4]
+```
+Returns all values in rows __1__ and __2__.
+```{r}
+A[1:2,]
+```
+Returns all values in columns __1__ and __2__.
+```{r}
+A[,1:2]
+```
+Returns the vector __row 1__.
+```{r}
+A[1,]
+```
+Returns all values except rows __1__ and __3__.
+```{r}
+A[-c(1,3),]
+```
+Returns only the values not in rows __1__ and __3__ and not in columns __1__, __3__, and __4__. Basically only the values in rows __2__ and __4__ and column __2__ of the previously specified matrix.
+```{r}
+A[-c(1,3),-c(1,3,4)]
+```
+
+## __*2.3.4 Loading Data*__
+
+Loads the data from the present working directory named "Auto.data" and defines it in the environment as "Auto". __Note__ *the variables are not currently defined*. Fix causes the data to be displayed in a pop out viewer.
+```{r}
+Auto=read.table("Auto.data")
+fix(Auto)
+```
+
+Reloads the data, but specifies that the values in the first row are the header and that values with a question mark are missing values.
+```{r}
+Auto=read.table("Auto.data",header=T,na.string="?")
+fix(Auto)
+```
+
+__Generates an external viewer of the data and then describes how many rows by how many colums.__
+```{r}
+fix(Auto)
+dim(Auto)
+```
+__Lists the first four rows of data across the nine variables.__
+```{r}
+Auto[(1:4),]
+```
+__Removes the rows with missing observations and then gives the new dimensions__
+```{r}
+Auto=na.omit(Auto)
+dim(Auto)
+```
+__Lists the variable names__.
+```{r}
+names(Auto)
+```
+
+## __*2.3.5 Additional Graphical and Numerical Summaries*__
+
+```{r}
+plot(cylinders,mpg)
+```
+__*Note:__ cannot plot because the variables are not yet properly defined. Thus, R has no idea what *cylinder* or *mpg* are.
+
+__By joining the data frame with the variable via a dollar sign R knows that cylinders and mpg are variables linked to that data table.
+```{r}
+plot(Auto$cylinders,Auto$mpg)
+```
+
+__However, by *"attaching"* Auto, we can tell R that the values in the header are linked to that data table and are our inputs.
+```{r}
+attach(Auto)
+```
+```{r}
+plot(cylinders,mpg)
+```
+
+__Converts quantitative data into qualitative. Converts cylinders which was previously quantiative with only 6 possible values into a variable with 5 factors. It is 5 factors because as you note from the plot above; there are no corresponding values for "7".__
+```{r}
+cylinders=as.factor(cylinders)
+```
+
+__Now that the data is categorical, it generates a *boxplot*. Here are a few boxplots with different options.__
+```{r}
+plot(cylinders,mpg)
+plot(cylinders,mpg,xlab="Cylinders",ylab="mpg",main="Mileage by # of Cylinders",col="red")
+plot(cylinders,mpg,xlab="Cylinders",ylab="mpg",main="Mileage by # of Cylinders",col="red",varwidth=T)
+```
+__Creates a histogram of the data. Here are a few with different options.__
+```{r}
+hist(mpg)
+hist(mpg,col=2)
+hist(mpg,col=2,breaks=15)
+```
+__Creates a scatterplot matrix. The second also creates a scatterplot matrix, but only for the five variables we specified.__
+```{r}
+pairs(Auto)
+pairs(~mpg+displacement+horsepower+weight+acceleration,Auto)
+```
+Plots the data and then enables a click tool in the plots console which prints the values of points you select. __*Note* does not work in R notebook, only in the console.__
+```{r}
+plot(horsepower,mpg)
+identify(horsepower,mpg,name)
+```
+__Produces a numerical summary of each variable in a particular data set.__
+```{r}
+summary(Auto)
+```
+
+## __2.4 Exercises__
+
+__*Conceptual*__
+
+1. For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.
++ (a) The sample size *n* is extremely large, and the number of predictors *p* is small. __If we have few predictors then our bias is likely to be larger. Also, given the large sample size, a more flexible method would likely reduce the bias and thus fit the data better.__
++ (b) The number of predictors *p* is extremely large, and the number of observations *n* is small. __Likely worse. With a large number of predictors we run the risk of *overfitting* the data. By increasing the flexibility, we only exacerbate this risk by approximating that may too closely fit the training data, but not necessarily work in practice.__
++ (c) The relationship between the predictors and response is highly non-linear. __Better. If the data is highly non-linear that it is fairly obvious that an inflexible model will not capture the function form of *f* very well at all.__
++ (d) The variance of the error terms, i.e. σ2 = Var(*E*), is extremely high. __Worse. Again, we run the risk of overfitting if we fit a model that is too flexible and functionally mirrors the residuals.__
+
+2. Explain whether each scenario is a *classification* or *regression* problem,
+and indicate whether we are most interested in *inference* or *prediction*. Finally, provide *n* and *p*.
+
++(a) We collect a set of data on the top 500 firms in the US. For each firm we record profit, number of employees, industry and the CEO salary. We are interested in understanding which factors affect CEO salary. __Regression-Inference. *n*=500 *p*=4__
+
++(b) We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched. For each product
+we have recorded whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables. __Classification-prediction. *n*=20 *p*=14__
+
++(c) We are interested in predicting the % change in the USD/Euro exchange rate in relation to the weekly changes in the world stock markets. Hence we collect weekly data for all of 2012. For each week we record the % change in the USD/Euro, the % change in the US market, the % change in the British market,
+and the % change in the German market. __Regression-Inference. *n*=52 *p*=3__
+
+3. We now revisit the bias-variance decomposition.
+
++(a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single
+plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should
+represent the values for each curve. There should be five curves. Make sure to label each one. __See attached jpeg.
+
++(b) Explain why each of the five curves has the shape displayed in part (a). 
+
+> __As we approximate a more flexible model, at first the bias decreases at a rate greater than the variance is increasing. However, eventually as we add flexibility past the optimal functional form the variance increases at a rate greater than the bias is decreasing. At this point, although our training MSE may be decreasing we are beginning to overfit the data. Thus, it is unlikely that our training set will fit our test set very well and past the optimal level of flexibility for our particular data and question our training MSE and test MSE deviate; the former decreasing and the latter increasing. The irreducible error is fundamentally unknowable and is just represented by a horizontal line independent of the other factors, but always below our test MSE because the test MSE contains the irreducible error.__
+
+4. __Skipped__
+
+5. What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred? 
+
+__Advantages: better fits the values if the true functional form of the data is not linear and reduces the bias of our estimated parameters.__ 
+
+__Disadvantages: if the data is linear, then a more flexible approach runs the risk of overfitting the data. It also requires more parameters and increases the variance.__
+
+__If the data is non-linear a more flexible approach is preferred. If the tradeoff is one such that a more flexible model leads to a significant reduction in the bias and only a small increase in the variance; a more flexible approach is preferable.__
+
+__if the data is very linear, a more rigid approach is preffered. If the tradeoff is one such that a less flexible model only increases the bias slightly, but greatly reduces the variance; a less flexible approach is preferable.__
+
+__A more flexible approach is preferred when we more interested in power of prediction as opposed to interpretability the results.__
+
+__A less flexible approach would be preferred if we were more interested in interpreting the paramaters as opposed to simply predicting a response.__
+
+6.) Describe the differences between a parametric and a non-parametric statistical learning approach. What are the advantages of a parametric approach to regression or classification (as opposed to a non-parametric approach)? What are its disadvantages?
+
+__A parametric approach assumes a functional form of *f* and thus reduces regression and classification problems down to approximating a set of parameters and then interpreting the results or predicting a response. It requires fewer observations than do non-parametric approaches.__
+
+__A non-parametric approach does not make any assumption about the functional form of *f*. Rather it requires a large *n* to accurately estimate the functional form of *f*.__
+
+__Advantages of parametric approach to regression or classification: does not require as great an *n* and can be estimated with relatively fewer parameters.__
+
+__Disadvantages of parametric approach to regression or classification: run the risk of approximating a functional form of *f* that is far from the true *f*. Also, run the risk of overfitting the model via the use of more flexible models when not appropriate.__
+
+7.) __Skipped__
+
+#### __*Applied__
+
+8.) This exercise relates to the *College* data set, which can be found in the file *College.csv*. It contains a number of variables for 777 different universities and colleges in the US.
+
+__Load the data__
+```{r}
+College=read.csv("College.csv",header=T)
+```
+__Add a new column for all rows in column one. View the data__
+```{r}
+rownames(College)=College[,1]
+fix(College)
+```
+__Eliminates the first column in the data where the names are stored. *Note* the actual row of college names is not a stored data colum.__
+```{r}
+College=College[,-1]
+fix(College)
+```
+__Summarize the data. *Note the college names are not stored as a data column.*__
+```{r}
+summary(College)
+```
+__Create a scatterplot of the first ten variables of the data.__
+```{r}
+pairs(College[,1:10])
+```
+__Plot Outstate vs. Private__
+```{r}
+plot(College$Outstate,col="green")
+plot(College$Private,col="red")
+```
+__Create a new qualitative variable "Elite"__
+```{r}
+Elite=rep("No",nrow(College))
+Elite[College$Top10perc >50]="Yes"
+Elite=as.factor(Elite)
+College=data.frame(College,Elite)
+```
+__Summary of how many Elite vs non-elite colleges__
+```{r}
+summary(Elite)
+```
+__Boxplots of Elite vs Outstate tuition__
+```{r}
+plot(College$Elite,College$Outstate)
+```
+__Histograms of different quantiative variables with different bins__
+```{r}
+par(mfrow=c(2,2))
+hist(College$Apps,col="red",breaks=7)
+hist(College$Accept,col="green",breaks=4)
+hist(College$Enroll,col="orange",breaks=5)
+```
+
+#### __9. This exercise involves the Auto data set studied in the lab. Make sure that the missing values have been removed from the data.__
+__Import the data, specify headers in the top row and define missing variables as "NA"__.
+```{r}
+Auto=read.table("Auto.data",header=T,na.strings="?")
+Auto=na.omit(Auto)
+dim(Auto)
+summary(Auto)
+```
+
+__*Quantitative*__: mpg, displacement, horsepower, weight, acceleration and year
+
+__*Qualitative*__: cylinders and origin
+
+__Range of quantitative variables__
+```{r}
+Range=apply(Auto[,-c(2,8,9)],2,range)
+row.names(Range)=c("Min","Max")
+Range
+```
+
+__Mean and Standard Deviation of Quantiative Variables__
+```{r}
+SD_Mean=apply(Auto[,-c(2,8,9)],2,function(x){c(mean(x),sd(x))})
+row.names(SD_Mean)=c("Mean","Standard Deviation")
+SD_Mean
+```
+__Range excluding rows 10-65__
+```{r}
+Range2=apply(Auto[-c(10:85),-c(2,8,9)],2,range)
+row.names(Range2)=c("Min","Max")
+Range2
+```
+_Mean excluding rows 10-85__
+```{r}
+Mean2=apply(Auto[-c(10:85),-c(2,8,9)],2,mean)
+Mean2
+```
+__Standard Deviation excluding rows 10-85__
+```{r}
+SD2=apply(Auto[-c(10:85),-c(2,8,9)],2,sd)
+SD2
+```
+__Now joining mean and SD__
+```{r}
+MEAN_SD2=apply(Auto[-c(10:85),-c(2,8,9)],2,function(x){c(mean(x),sd(x))})
+row.names(MEAN_SD2)=c("Mean","Standard_Deviation")
+MEAN_SD2
+```
+
+__Graphical depictions of the data__
+```{r}
+boxplot(Auto$mpg~Auto$cylinders,col="red",xlab="Cylinders",ylab="MPG",main="MPG by # of Cylinders")
+scatter.smooth(Auto$year,Auto$mpg,col="green",xlab="Year",ylab="MPG",main="Mpg by Year")
+pairs(Auto)
+boxplot(Auto$mpg~Auto$origin,col="grey",xlab="Country of Origin",ylab="MPG",main="MPG by Country of Origin",names=c("American","European","Japanese"))
+```
+
+#### __10. This exercise involves the *Boston* housing data set.__
+
+```{r}
+library(MASS)
+Boston
+?Boston
+```
+
+```{r}
+dim(Boston)
+```
+
+*Finding indicate that predominantly African American towns have lower crime rates.*
+```{r}
+par(mfrow=c(2,2))
+scatter.smooth(Boston$ptratio,Boston$lstat,xlab="Pupil-to-teacher Ratio",ylab="% of Lower Class Pop",main="PT Ratio by % of Lower Status",col="blue")
+boxplot(Boston$medv~Boston$rad,col="green",xlab="Index of Accessibility to Radial Highways",ylab="Median Home Value",main="Median Home Value")
+scatter.smooth(Boston$crim,Boston$black,col="red",xlab="Crime Rate",ylab="Proportion of Blacks by Town",main="Crime Rate by Proportion of Blacks")
+```
+*Also, it seems that areas with higher percentages of the population classified as "lower status" also have higher pupil-to-teacher ratios. This means that teachers in more "impoverished" areas are having to do more.*
+
+*I am not sure what the index of accessibility to radial highways is, but it seems clear that in the case of "24" it is linked to lower median home values. However, the dispersion of values is of some note.*
+
+```{r}
+plot(Boston$crim)
+identify(Boston$crim)
+```
+__The above values are all town codes that have extremely high crime rates.__
+
+```{r}
+selection = Boston[,"chas"]
+nrow(Boston[selection,])
+```
+
+```{r}
+median(Boston$ptratio)
+```
+
+```{r}
+plot(Boston$medv)
+identify(Boston$medv)
+```
+
+```{r}
+print(Boston[399,])
+```
+
+```{r}
+Range3=apply(Boston[,],2,range)
+row.names(Range3)=c("Min","Max")
+Range3
+```
+
+```{r}
+MoreThanSeven=rep("No",nrow(Boston))
+MoreThanSeven[Boston$rm>7]="Yes"
+as.factor(MoreThanSeven)
+Boston=data.frame(Boston,MoreThanSeven)
+summary(Boston$MoreThanSeven)
+```
+
+```{r}
+morethaneight=rep("No",nrow(Boston))
+morethaneight[Boston$rm>8]="Yes"
+as.factor(morethaneight)
+Boston=data.frame(Boston,morethaneight)
+summary(Boston$morethaneight)
+```
+
+
+
+
+
+
